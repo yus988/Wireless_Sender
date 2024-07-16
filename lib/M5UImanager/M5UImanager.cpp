@@ -11,12 +11,9 @@ int buttonB_y;
 int buttonC_x;
 int buttonC_y;
 
-#define data_A \
-  { 0, 0, 0, 0, 0, 150, 150, 0 }
-#define data_B \
-  { 0, 0, 1, 0, 0, 150, 150, 0 }
-#define data_C \
-  { 0, 0, 2, 0, 0, 200, 200, 0 }
+#define data_A {0, 0, 0, 0, 0, 150, 150, 0}
+#define data_B {0, 0, 1, 0, 0, 150, 150, 0}
+#define data_C {0, 0, 2, 0, 0, 200, 200, 0}
 
 bool buttonA_pressed = false;
 bool buttonB_pressed = false;
@@ -83,9 +80,12 @@ const char *M5ButtonNotify(const char *stat) {
 #ifdef M5STACK_CORE_S3
 
 void drawButtons() {
-  M5.Display.fillRect(buttonA_x, buttonA_y, button_width, button_height, TFT_WHITE);
-  M5.Display.fillRect(buttonB_x, buttonB_y, button_width, button_height, TFT_WHITE);
-  M5.Display.fillRect(buttonC_x, buttonC_y, button_width, button_height, TFT_WHITE);
+  M5.Display.fillRect(buttonA_x, buttonA_y, button_width, button_height,
+                      TFT_WHITE);
+  M5.Display.fillRect(buttonB_x, buttonB_y, button_width, button_height,
+                      TFT_WHITE);
+  M5.Display.fillRect(buttonC_x, buttonC_y, button_width, button_height,
+                      TFT_WHITE);
 
   // 境目に縦棒を描画
   M5.Display.fillRect(buttonB_x - 1, buttonB_y, 2, button_height, TFT_BLACK);
@@ -94,9 +94,12 @@ void drawButtons() {
   M5.Display.setTextColor(TFT_BLACK);
   M5.Display.setTextDatum(CC_DATUM);
 
-  M5.Display.drawString("Button A", buttonA_x + button_width / 2, buttonA_y + button_height / 2);
-  M5.Display.drawString("Button B", buttonB_x + button_width / 2, buttonB_y + button_height / 2);
-  M5.Display.drawString("Button C", buttonC_x + button_width / 2, buttonC_y + button_height / 2);
+  M5.Display.drawString("Button A", buttonA_x + button_width / 2,
+                        buttonA_y + button_height / 2);
+  M5.Display.drawString("Button B", buttonB_x + button_width / 2,
+                        buttonB_y + button_height / 2);
+  M5.Display.drawString("Button C", buttonC_x + button_width / 2,
+                        buttonC_y + button_height / 2);
 }
 
 const char *M5ButtonNotify(const char *stat) {
@@ -116,7 +119,8 @@ const char *M5ButtonNotify(const char *stat) {
         screenUpdated = true;
       }
       buttonA_pressed = true;
-      M5.Display.fillRect(buttonA_x, buttonA_y, button_width, button_height, TFT_RED);
+      M5.Display.fillRect(buttonA_x, buttonA_y, button_width, button_height,
+                          TFT_RED);
     } else {
       if (buttonA_pressed) {
         buttonA_pressed = false;
@@ -132,7 +136,8 @@ const char *M5ButtonNotify(const char *stat) {
         screenUpdated = true;
       }
       buttonB_pressed = true;
-      M5.Display.fillRect(buttonB_x, buttonB_y, button_width, button_height, TFT_GREEN);
+      M5.Display.fillRect(buttonB_x, buttonB_y, button_width, button_height,
+                          TFT_GREEN);
     } else {
       if (buttonB_pressed) {
         buttonB_pressed = false;
@@ -148,7 +153,8 @@ const char *M5ButtonNotify(const char *stat) {
         screenUpdated = true;
       }
       buttonC_pressed = true;
-      M5.Display.fillRect(buttonC_x, buttonC_y, button_width, button_height, TFT_BLUE);
+      M5.Display.fillRect(buttonC_x, buttonC_y, button_width, button_height,
+                          TFT_BLUE);
     } else {
       if (buttonC_pressed) {
         buttonC_pressed = false;

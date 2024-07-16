@@ -1,6 +1,11 @@
-#include <M5Unified.h>
 #include <WiFi.h>
 #include <esp_now.h>
+
+#ifndef NO_DISPLAY
+  #include <M5Unified.h>
+#endif
+
+namespace espnowManager {
 
 esp_now_peer_info_t slave;
 // data = [category, wearer_id, device_pos, data_id, sub_id, L_Vol, R_Vol,
@@ -122,7 +127,7 @@ void sendSerialViaESPNOW(void) {
     }
     esp_now_send(slave.peer_addr, data, sizeof(data));
 
-#if defined(M5STACK_CORE_S3) || defined(M5STACK_GRAY)
+#if defined(ENABLE_DISPLAY)
     M5.Display.clear(TFT_BLACK);
     M5.Display.setCursor(0, 100);
     M5.Display.setTextColor(TFT_WHITE);
@@ -133,4 +138,6 @@ void sendSerialViaESPNOW(void) {
     M5.update();
 #endif
   }
+}
+
 }
