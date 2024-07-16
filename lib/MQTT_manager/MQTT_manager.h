@@ -3,17 +3,22 @@
 
 #include <PubSubClient.h>
 #include <WiFi.h>
-#include "../../config.h"  // プロジェクトのルートからインクルード
 #include <WiFiClientSecure.h>  // WiFiClientSecureをインクルード
 
-namespace MQTT_manager {
-extern bool mqttConnected;
+#include "../../config.h"  // プロジェクトのルートからインクルード
 
-// 初期化関数
-void initMQTTclient(void (*statusCallback)(const char*));
-// ループ関数
+namespace MQTT_manager {
+
+extern bool mqttConnected;
+extern WiFiClientSecure espClient;
+extern PubSubClient client;
+
+void initMQTTclient(void (*statusCb)(const char*));
 void loopMQTTclient();
-void reconnect();
+
+// メッセージ送信関数の宣言
+void sendMessageToHapbeat(const char* message);
+void sendMessageToWebApp(const char* message);
 
 }  // namespace MQTT_manager
 

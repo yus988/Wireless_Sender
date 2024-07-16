@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "Adafruit_TCS34725.h"
+#include "ColorSensor.h"
 
 namespace ColorSensor {
 
@@ -12,6 +13,33 @@ void initColorSensor() {
   } else {
     Serial.println("No TCS34725 found ... check your connections");
     while (1);
+  }
+}
+
+void getColorValues(uint8_t& r, uint8_t& g, uint8_t& b) {
+  uint16_t raw_r, raw_g, raw_b, c;
+  tcs.getRawData(&raw_r, &raw_g, &raw_b, &c);
+
+  // 輝度（クリアチャネル）を基に正規化
+  float normalized_r = raw_r / (float)c;
+  float normalized_g = raw_g / (float)c;
+  float normalized_b = raw_b / (float)c;
+
+  // 0-255の範囲に収める
+  r = min(255, max(0, (int)(normalized_r * 255.0)));
+  g = min(255, max(0, (int)(normalized_g * 255.0)));
+  b = min(255, max(0, (int)(normalized_b * 255.0)));
+}
+
+String determineColor(uint8_t r, uint8_t g, uint8_t b) {
+  if (r >= RED_THRESHOLD_R_MIN && g <= RED_THRESHOLD_G_MAX && b <= RED_THRESHOLD_B_MAX) {
+    return "Red";
+  } else if (r <= GREEN_THRESHOLD_R_MAX && g >= GREEN_THRESHOLD_G_MIN && b <= GREEN_THRESHOLD_B_MAX) {
+    return "Green";
+  } else if (r >= YELLOW_THRESHOLD_R_MIN && g >= YELLOW_THRESHOLD_G_MIN && b <= YELLOW_THRESHOLD_B_MAX) {
+    return "Yellow";
+  } else {
+    return "None";
   }
 }
 
@@ -41,4 +69,4 @@ void loopColorSensor() {
   Serial.print(" ");
   Serial.println(" ");
 }
-}
+}  // namespace ColorSensor
