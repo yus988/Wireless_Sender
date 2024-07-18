@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
-#include "./config.h"
+#include "../config.h"
 
 #ifdef ENABLE_COLOR_SENSOR
   #include <ColorSensor.h>
@@ -55,7 +55,6 @@ void TaskColorSensor(void* args) {
         char message[100];
         snprintf(message, sizeof(message), "%d,%d,%d,%d,%d,%d,%d,%d", CATEGORY,
                  WEARER_ID, DEVICE_POS, id, SUB_ID, lVol, rVol, PLAY_CMD);
-
         // 全てのHapbeatから応答があるまで while
         // でメッセージを送り続ける処理を入れる
         MQTT_manager::sendMessageToHapbeat(message);
@@ -71,38 +70,41 @@ void TaskColorSensor(void* args) {
     serializeJson(doc, jsonMessage);
 
     MQTT_manager::sendMessageToWebApp(jsonMessage.c_str());
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    delay(1000);
+
+    // ヒープメモリの状態を出力
+    Serial.printf("Free heap: %d\n", ESP.getFreeHeap());
   }
 }
 
 void TaskMQTT(void* args) {
   while (1) {
     MQTT_manager::loopMQTTclient();
-    vTaskDelay(1 / portTICK_PERIOD_MS);
+    delay(100);
+
+    // ヒープメモリの状態を出力
+    // Serial.printf("Free heap: %d\n", ESP.getFreeHeap());
   }
 }
 
 void setup(void) {
   Serial.begin(115200);
-#ifdef ESPNOW
-  initEspNow();
-#endif
-
 #if defined(ENABLE_DISPLAY)
   initM5UImanager();
 #endif
 
 #ifdef ESPNOW
-  espnowManager::init_esp_now(audioManager::PlaySndOnDataRecv);
+  initEspNow();
+
 #elif MQTT
   MQTT_manager::initMQTTclient(statusCallback);
 #endif
 
 #ifdef ENABLE_COLOR_SENSOR
   ColorSensor::initColorSensor();
-  xTaskCreatePinnedToCore(TaskColorSensor, "TaskColorSensor", 4096, NULL, 0,
-                          &thp[1], 0);
-  xTaskCreatePinnedToCore(TaskMQTT, "TaskMQTT", 4096, NULL, 2, &thp[0], 1);
+  xTaskCreatePinnedToCore(TaskColorSensor, "TaskColorSensor", 8192, NULL, 10,
+                          &thp[1], 1);
+  xTaskCreatePinnedToCore(TaskMQTT, "TaskMQTT", 8192, NULL, 23, &thp[0], 1);
 #endif
 }
 
@@ -110,8 +112,8 @@ void loop(void) {
 #ifdef ESPNOW
   sendSerialViaESPNOW();
 #endif
-  cmd_stat = "empty";
 #if defined(ENABLE_DISPLAY)
+  cmd_stat = "empty";
   cmd_btn = M5ButtonNotify(cmd_stat);
   if (cmd_btn != "empty") {
     SendEspNOW(cmd_btn);

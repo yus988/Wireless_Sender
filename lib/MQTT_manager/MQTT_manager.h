@@ -1,9 +1,9 @@
 #ifndef MQTT_MANAGER_H
 #define MQTT_MANAGER_H
 
-#include <PubSubClient.h>
 #include <WiFi.h>
-#include <WiFiClientSecure.h>  // WiFiClientSecureをインクルード
+#include <WiFiClientSecure.h>
+#include <MQTT.h>  // 256dpi/MQTTライブラリをインクルード
 
 #include "../../config.h"  // プロジェクトのルートからインクルード
 
@@ -11,7 +11,7 @@ namespace MQTT_manager {
 
 extern bool mqttConnected;
 extern WiFiClientSecure espClient;
-extern PubSubClient client;
+extern MQTTClient client;
 
 void initMQTTclient(void (*statusCb)(const char*));
 void loopMQTTclient();

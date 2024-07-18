@@ -69,4 +69,5 @@ void loopColorSensor() {
   Serial.print(" ");
   Serial.println(" ");
 }
+
 }  // namespace ColorSensor
