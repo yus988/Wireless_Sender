@@ -5,7 +5,7 @@
 #include <WiFiClientSecure.h>
 #include <MQTT.h>  // 256dpi/MQTTライブラリをインクルード
 
-#include "../../config.h"  // プロジェクトのルートからインクルード
+#include "../../include/config.h"  // プロジェクトのルートからインクルード
 
 namespace MQTT_manager {
 

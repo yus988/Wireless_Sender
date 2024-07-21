@@ -32,11 +32,12 @@ void getColorValues(uint8_t& r, uint8_t& g, uint8_t& b) {
 }
 
 String determineColor(uint8_t r, uint8_t g, uint8_t b) {
-  if (r >= RED_THRESHOLD_R_MIN && g <= RED_THRESHOLD_G_MAX && b <= RED_THRESHOLD_B_MAX) {
+  if (r >= RED_THD.rMin && g <= RED_THD.gMax && b <= RED_THD.bMax) {
     return "Red";
-  } else if (r <= GREEN_THRESHOLD_R_MAX && g >= GREEN_THRESHOLD_G_MIN && b <= GREEN_THRESHOLD_B_MAX) {
-    return "Green";
-  } else if (r >= YELLOW_THRESHOLD_R_MIN && g >= YELLOW_THRESHOLD_G_MIN && b <= YELLOW_THRESHOLD_B_MAX) {
+  } else if (r <= BLUE_THD.rMax && g >= BLUE_THD.gMax && b <= BLUE_THD.bMin) {
+    return "Blue";
+  } else if (r >= YELLOW_THD.rMin && g >= YELLOW_THD.gMin &&
+             b <= YELLOW_THD.bMax) {
     return "Yellow";
   } else {
     return "None";

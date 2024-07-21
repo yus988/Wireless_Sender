@@ -1,10 +1,11 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
-#include "../config.h"
-
 #ifdef ENABLE_COLOR_SENSOR
   #include <ColorSensor.h>
+  #include <FastLED.h>
+  // #define CREATE_CRGB(color) CRGB((color).r, (color).g, (color).b)
+
 #endif
 
 #ifndef NO_DISPLAY
@@ -17,11 +18,17 @@
   #include <MQTT_manager.h>
 #endif
 
+#include "adjustmentParams.h"
+#include "pinAssign.h"
+#include "config.h"
+
 const char* cmd_stat;
 const char* cmd_btn;
 const char* cmd_conn;
 
 String lastColor = "None";
+
+CRGB _leds[1];
 
 void statusCallback(const char* status) { Serial.printf(status); }
 
@@ -42,14 +49,14 @@ void TaskColorSensor(void* args) {
         // 送信するメッセージの生成
         int id, lVol;
         if (color == "Red") {
-          id = RED_ID;
-          lVol = RED_VOL;
+          id = RED_PARAMS.id;
+          lVol = RED_PARAMS.vol;
         } else if (color == "Green") {
-          id = GREEN_ID;
-          lVol = GREEN_VOL;
+          id = GREEN_PARAMS.id;
+          lVol = GREEN_PARAMS.vol;
         } else if (color == "Yellow") {
-          id = YELLOW_ID;
-          lVol = YELLOW_VOL;
+          id = YELLOW_PARAMS.id;
+          lVol = YELLOW_PARAMS.vol;
         }
         int rVol = lVol;
         char message[100];
@@ -105,6 +112,13 @@ void setup(void) {
   xTaskCreatePinnedToCore(TaskColorSensor, "TaskColorSensor", 8192, NULL, 10,
                           &thp[1], 1);
   xTaskCreatePinnedToCore(TaskMQTT, "TaskMQTT", 8192, NULL, 23, &thp[0], 1);
+  FastLED.addLeds<NEOPIXEL, LED_PIN>(_leds, 1);
+  // _leds[0] = CRGB(100, 0, 0);
+  // _leds[0] =
+  //     CRGB(COLOR_UNCONNECTED.r, COLOR_UNCONNECTED.g, COLOR_UNCONNECTED.b);
+
+  _leds[0] = CREATE_CRGB(COLOR_UNCONNECTED);
+  FastLED.show();
 #endif
 }
 

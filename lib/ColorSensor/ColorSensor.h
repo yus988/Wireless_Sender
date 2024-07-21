@@ -1,6 +1,6 @@
 #ifndef COLOR_SENSOR_H
 #define COLOR_SENSOR_H
-#include "../../config.h"  // プロジェクトのルートからインクルード
+#include "../../include/adjustmentParams.h"
 
 namespace ColorSensor {
 void initColorSensor();
