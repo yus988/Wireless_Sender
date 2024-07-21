@@ -29,6 +29,8 @@ void getColorValues(uint8_t& r, uint8_t& g, uint8_t& b) {
   r = min(255, max(0, (int)(normalized_r * 255.0)));
   g = min(255, max(0, (int)(normalized_g * 255.0)));
   b = min(255, max(0, (int)(normalized_b * 255.0)));
+
+  
 }
 
 String determineColor(uint8_t r, uint8_t g, uint8_t b) {
