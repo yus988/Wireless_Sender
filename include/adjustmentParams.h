@@ -3,7 +3,6 @@
 #define ADJ_PARAMS_H
 
 #ifdef ENABLE_COLOR_SENSOR
-
 //   #include <FastLED.h>
 // カラーコンフィグ
 // 各色のしきい値を定義（例）
@@ -32,9 +31,9 @@ struct RGB {
   uint8_t g;
   uint8_t b;
 };
-
-const RGB COLOR_UNCONNECTED = {10, 0, 0};
-const RGB COLOR_CONNECTED = {0, 10, 0};
+// 接続 / 切断時のLEDの色
+const RGB COLOR_CONNECTED = {0, 5, 0};
+const RGB COLOR_UNCONNECTED = {5, 0, 0};
   #define CREATE_CRGB(color) CRGB((color).r, (color).g, (color).b)
 
   // Hapbeat用パラメータの定義（共通）

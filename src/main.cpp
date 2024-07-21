@@ -4,8 +4,6 @@
 #ifdef ENABLE_COLOR_SENSOR
   #include <ColorSensor.h>
   #include <FastLED.h>
-  // #define CREATE_CRGB(color) CRGB((color).r, (color).g, (color).b)
-
 #endif
 
 #ifndef NO_DISPLAY
@@ -30,7 +28,16 @@ String lastColor = "None";
 
 CRGB _leds[1];
 
-void statusCallback(const char* status) { Serial.printf(status); }
+void mqttStatusCallback(const char* status) {
+  // Serial.println(status);
+  // if (strcmp(status, "Successfully connected to Hapbeat") == 0) {
+  //   _leds[0] = CREATE_CRGB(COLOR_CONNECTED);
+  //   Serial.println("turn LED to GREEN");
+  // } else if (strstr(status, "failed") != NULL) {
+  //   _leds[0] = CREATE_CRGB(COLOR_UNCONNECTED);
+  // }
+  // FastLED.show();
+}
 
 TaskHandle_t thp[2];
 void TaskColorSensor(void* args) {
@@ -77,48 +84,44 @@ void TaskColorSensor(void* args) {
     serializeJson(doc, jsonMessage);
 
     MQTT_manager::sendMessageToWebApp(jsonMessage.c_str());
-    delay(1000);
-
-    // ヒープメモリの状態を出力
-    Serial.printf("Free heap: %d\n", ESP.getFreeHeap());
+    delay(10000);
   }
 }
 
 void TaskMQTT(void* args) {
   while (1) {
     MQTT_manager::loopMQTTclient();
+    if (MQTT_manager::mqttConnected) {
+      _leds[0] = CREATE_CRGB(COLOR_CONNECTED);
+    } else {
+      _leds[0] = CREATE_CRGB(COLOR_UNCONNECTED);
+    }
+    FastLED.show();
     delay(100);
-
-    // ヒープメモリの状態を出力
-    // Serial.printf("Free heap: %d\n", ESP.getFreeHeap());
   }
 }
 
 void setup(void) {
   Serial.begin(115200);
+
 #if defined(ENABLE_DISPLAY)
   initM5UImanager();
 #endif
 
-#ifdef ESPNOW
-  initEspNow();
-
-#elif MQTT
-  MQTT_manager::initMQTTclient(statusCallback);
-#endif
-
 #ifdef ENABLE_COLOR_SENSOR
+  FastLED.addLeds<NEOPIXEL, LED_PIN>(_leds, 1);
+  _leds[0] = CREATE_CRGB(COLOR_UNCONNECTED);
+  FastLED.show();
   ColorSensor::initColorSensor();
   xTaskCreatePinnedToCore(TaskColorSensor, "TaskColorSensor", 8192, NULL, 10,
                           &thp[1], 1);
-  xTaskCreatePinnedToCore(TaskMQTT, "TaskMQTT", 8192, NULL, 23, &thp[0], 1);
-  FastLED.addLeds<NEOPIXEL, LED_PIN>(_leds, 1);
-  // _leds[0] = CRGB(100, 0, 0);
-  // _leds[0] =
-  //     CRGB(COLOR_UNCONNECTED.r, COLOR_UNCONNECTED.g, COLOR_UNCONNECTED.b);
+#endif
 
-  _leds[0] = CREATE_CRGB(COLOR_UNCONNECTED);
-  FastLED.show();
+#ifdef ESPNOW
+  initEspNow();
+#elif MQTT
+  MQTT_manager::initMQTTclient(mqttStatusCallback);
+  xTaskCreatePinnedToCore(TaskMQTT, "TaskMQTT", 8192, NULL, 23, &thp[0], 1);
 #endif
 }
 

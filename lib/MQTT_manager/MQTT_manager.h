@@ -12,6 +12,7 @@ namespace MQTT_manager {
 extern bool mqttConnected;
 extern WiFiClientSecure espClient;
 extern MQTTClient client;
+extern void (*statusCallback)(const char*);
 
 void initMQTTclient(void (*statusCb)(const char*));
 void loopMQTTclient();

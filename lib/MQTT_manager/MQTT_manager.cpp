@@ -12,7 +12,7 @@ void (*statusCallback)(const char*);
 // トピック名の定義は config.h から取得
 const char* topicHapbeat = MQTT_TOPIC_HAPBEAT;
 const char* topicWebApp = MQTT_TOPIC_WEBAPP;
-const int QoS = 1; // 0=once, 1=least once, 2=exact once
+const int QoS = 1;  // 0=once, 1=least once, 2=exact once
 
 // ユニークなクライアントIDを生成する関数
 String getUniqueClientId() {
@@ -22,7 +22,7 @@ String getUniqueClientId() {
 }
 
 // MQTTメッセージ到着時のコールバック関数
-void messageReceived(String &topic, String &payload) {
+void messageReceived(String& topic, String& payload) {
   Serial.println("Message arrived: ");
   Serial.println("  topic: " + topic);
   Serial.println("  payload: " + payload);
@@ -49,13 +49,16 @@ void connect() {
       if (client.subscribe(topicHapbeat, 1)) {
         Serial.print("Subscribed to topic: ");
         Serial.println(topicHapbeat);
+        statusCallback("Successfully connected to Hapbeat");
       } else {
+        mqttConnected = false;
         Serial.println("Subscription to topicHapbeat failed");
       }
       if (client.subscribe(topicWebApp, 1)) {
         Serial.print("Subscribed to topic: ");
         Serial.println(topicWebApp);
       } else {
+        mqttConnected = false;
         Serial.println("Subscription to topicWebApp failed");
       }
     } else {
@@ -84,9 +87,9 @@ void initMQTTclient(void (*statusCb)(const char*)) {
 
   // 証明書の設定
   espClient.setCACert(ca_cert);
-  espClient.setTimeout(20000); // タイムアウト設定
+  espClient.setTimeout(20000);  // タイムアウト設定
 
-  client.begin(MQTT_SERVER, MQTT_PORT, espClient);\
+  client.begin(MQTT_SERVER, MQTT_PORT, espClient);
   // client.onMessage(messageReceived);
   connect();
 }
