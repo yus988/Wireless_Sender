@@ -12,7 +12,7 @@ void (*statusCallback)(const char*);
 // トピック名の定義は config.h から取得
 const char* topicHapbeat = MQTT_TOPIC_HAPBEAT;
 const char* topicWebApp = MQTT_TOPIC_WEBAPP;
-const int QoS = 1;  // 0=once, 1=least once, 2=exact once
+const int QoS_Val = 1;  // 0=once, 1=least once, 2=exact once
 
 // ユニークなクライアントIDを生成する関数
 String getUniqueClientId() {
@@ -92,6 +92,12 @@ void initMQTTclient(void (*statusCb)(const char*)) {
   client.begin(MQTT_SERVER, MQTT_PORT, espClient);
   // client.onMessage(messageReceived);
   connect();
+
+  // 誤って retain 送ってしまった場合にリセット
+    // client.publish(topicHapbeat, "", true,
+    //               QoS_Val);  // 空のペイロードとRetainedフラグをtrueに設定
+    // client.publish(topicWebApp, "", true,
+    //               QoS_Val);  // 空のペイロードとRetainedフラグをtrueに設定
 }
 
 void loopMQTTclient() {
@@ -103,7 +109,7 @@ void loopMQTTclient() {
 
 // トピックごとのメッセージ送信関数
 void sendMessageToHapbeat(const char* message) {
-  if (client.publish(topicHapbeat, message, true, QoS)) {
+  if (client.publish(topicHapbeat, message, false, QoS_Val)) {
     Serial.print("Message sent to Hapbeat: ");
     Serial.println(message);
   } else {
@@ -112,7 +118,7 @@ void sendMessageToHapbeat(const char* message) {
 }
 
 void sendMessageToWebApp(const char* message) {
-  if (client.publish(topicWebApp, message, true, QoS)) {
+  if (client.publish(topicWebApp, message, false, QoS_Val)) {
     Serial.print("Message sent to WebApp: ");
     Serial.println(message);
   } else {

@@ -28,6 +28,7 @@ String lastColor = "None";
 
 CRGB _leds[1];
 
+// mqtt 受信で状態を変えないのであれば不要
 void mqttStatusCallback(const char* status) {
   // Serial.println(status);
   // if (strcmp(status, "Successfully connected to Hapbeat") == 0) {
