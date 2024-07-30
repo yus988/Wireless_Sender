@@ -33,18 +33,7 @@ void getColorValues(uint8_t& r, uint8_t& g, uint8_t& b) {
   
 }
 
-String determineColor(uint8_t r, uint8_t g, uint8_t b) {
-  if (r >= RED_THD.rMin && g <= RED_THD.gMax && b <= RED_THD.bMax) {
-    return "Red";
-  } else if (r <= BLUE_THD.rMax && g >= BLUE_THD.gMax && b <= BLUE_THD.bMin) {
-    return "Blue";
-  } else if (r >= YELLOW_THD.rMin && g >= YELLOW_THD.gMin &&
-             b <= YELLOW_THD.bMax) {
-    return "Yellow";
-  } else {
-    return "None";
-  }
-}
+
 
 void loopColorSensor() {
   uint16_t r, g, b, c, colorTemp, lux;

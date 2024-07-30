@@ -25,6 +25,18 @@ const ColorThreshold BLUE_THD = {
 const ColorThreshold YELLOW_THD = {
     .rMin = 90, .rMax = 255, .gMin = 90, .gMax = 255, .bMin = 0, .bMax = 70};
 
+// VibrationParams 構造体の定義
+struct VibrationParams {
+  uint8_t id;   // データの種類 0--
+  uint8_t vol;  // 振動の強さ 0--255
+};
+// 色別のIDとボリュームのインスタンスを定義
+const VibrationParams BLUE_PARAMS = {.id = 0, .vol = 30};
+const VibrationParams YELLOW_PARAMS = {.id = 1, .vol = 30};
+const VibrationParams RED_PARAMS = {.id = 2, .vol = 30};
+
+
+
 // RGB値を保持する構造体の定義
 struct RGB {
   uint8_t r;
@@ -47,22 +59,12 @@ const RGB COLOR_UNCONNECTED = {255, 0, 0};
   #define COLOR_CHANGE_INTERVAL \
     5000  // ミリ秒、同じ色で再度有効にするためのインターバル
 
-// VibrationParams 構造体の定義
-struct VibrationParams {
-  uint8_t id;   // データの種類 0--
-  uint8_t vol;  // 振動の強さ 0--255
-};
-
-// Hapbeat用パラメータの定義（共通）
-#define CATEGORY 99
-#define WEARER_ID 99
-#define DEVICE_POS 99
-#define SUB_ID 0
-#define PLAY_CMD 1
-// 色別のIDとボリュームのインスタンスを定義
-const VibrationParams RED_PARAMS = {.id = 2, .vol = 30};
-const VibrationParams BLUE_PARAMS = {.id = 5, .vol = 30};
-const VibrationParams YELLOW_PARAMS = {.id = 4, .vol = 30};
+  // Hapbeat用パラメータの定義（共通）
+  #define CATEGORY 99
+  #define WEARER_ID 99
+  #define DEVICE_POS 99
+  #define SUB_ID 0
+  #define PLAY_CMD 1  // 0: oneshot, 1: loopStart, 2: loopStop
 
 #endif
 

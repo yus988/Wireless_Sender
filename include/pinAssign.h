@@ -6,4 +6,8 @@
   #define LED_PIN 27
 #endif
 
+#ifdef M5STAMP_S3
+  #define LED_PIN 21
+#endif
+
 #endif

@@ -42,6 +42,20 @@ void mqttStatusCallback(const char* status) {
 
 TaskHandle_t thp[2];
 
+// 色の反t寧
+String determineColor(uint8_t r, uint8_t g, uint8_t b) {
+  if (r >= RED_THD.rMin && g <= RED_THD.gMax && b <= RED_THD.bMax) {
+    return "Red";
+  } else if (r <= BLUE_THD.rMax && g <= BLUE_THD.gMax && b >= BLUE_THD.bMin) {
+    return "Blue";
+  } else if (r >= YELLOW_THD.rMin && g >= YELLOW_THD.gMin &&
+             b <= YELLOW_THD.bMax) {
+    return "Yellow";
+  } else {
+    return "None";
+  }
+}
+
 void TaskColorSensor(void* args) {
   static uint8_t r, g, b;
   static int count = 0;                     // 処理のカウント変数
@@ -55,10 +69,8 @@ void TaskColorSensor(void* args) {
 
   while (1) {
     ColorSensor::getColorValues(r, g, b);
-    Serial.printf("R: %d G: %d B: %d\n", r, g, b);
-    String color = ColorSensor::determineColor(r, g, b);
-    Serial.printf("Color is: ");
-    Serial.println(color);
+    String color = determineColor(r, g, b);
+    Serial.printf("R: %d G: %d B: %d, color is: %s\n", r, g, b, color.c_str());
 
     unsigned long currentTime = millis();
     bool shouldSendMessage = false;
@@ -147,6 +159,13 @@ void setup(void) {
   ColorSensor::initColorSensor();
   xTaskCreatePinnedToCore(TaskColorSensor, "TaskColorSensor", 8192, NULL, 10,
                           &thp[1], 1);
+
+  // M5Capuleをバッテリー駆動で使いたいとき
+  #ifdef M5CAPSULE
+  pinMode(GPIO_NUM_46, OUTPUT);
+  digitalWrite(GPIO_NUM_46, HIGH);
+  #endif
+
 #endif
 
 #ifdef ESPNOW
