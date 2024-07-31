@@ -17,8 +17,8 @@
 #endif
 
 #include "adjustmentParams.h"
-#include "pinAssign.h"
 #include "config.h"
+#include "pinAssign.h"
 
 const char* cmd_stat;
 const char* cmd_btn;
@@ -61,6 +61,12 @@ void TaskColorSensor(void* args) {
   static int count = 0;                     // 処理のカウント変数
   static unsigned long lastChangeTime = 0;  // 最後に色が変わった時間
   static String lastSentColor = "";         // 最後に送信した色
+
+  static unsigned long lastNoneTime = 0;  // 最後にNoneが検出された開始時間
+
+  static bool sentMessageForNone =
+      false;  // Noneの色に対してメッセージを送ったかどうかのフラグ
+
   const int interval = SEND_WEBAPP_INTERVAL /
                        COLOR_SENSOR_INTERVAL;  // 任意の変数回ごとに実行する回数
   const unsigned long colorChangeDelay =
@@ -77,8 +83,10 @@ void TaskColorSensor(void* args) {
 
     // 色が変わった場合の処理
     if (color != lastColor) {
+      // 赤、青、黄のいずれかの色が検出された場合
       if (color == "Red" || color == "Blue" || color == "Yellow") {
-        // 赤、青、黄のいずれかの色が検出された場合
+        sentMessageForNone = false;
+        lastNoneTime = 0;
         if (lastSentColor != color ||
             (currentTime - lastChangeTime >= colorChangeDelay)) {
           // 色が変わった、または一定時間経過している場合に送信
@@ -89,7 +97,19 @@ void TaskColorSensor(void* args) {
       } else {
         // 赤、青、黄以外の色が検出された場合
         lastChangeTime = currentTime;  // 色が変わった時間を記録
+        if (!sentMessageForNone) {
+          lastNoneTime = currentTime;  // Noneが始まった時間を記録
+        }
       }
+    }
+
+    // Noneが1分間連続しているか確認
+    if (color == "None" && !sentMessageForNone &&
+        (currentTime - lastNoneTime >= RETAIN_REFRESH_INTERVAL)) {
+      // Noneの色が1分間続いたらメッセージを送信
+      char message[] = "98,98,98,4,0,0,0,0";
+      MQTT_manager::sendMessageToHapbeat(message);
+      sentMessageForNone = true;  // メッセージを送信したフラグを立てる
     }
 
     if (shouldSendMessage) {

@@ -109,7 +109,7 @@ void loopMQTTclient() {
 
 // トピックごとのメッセージ送信関数
 void sendMessageToHapbeat(const char* message) {
-  if (client.publish(topicHapbeat, message, false, QoS_Val)) {
+  if (client.publish(topicHapbeat, message, true, QoS_Val)) {
     Serial.print("Message sent to Hapbeat: ");
     Serial.println(message);
   } else {
