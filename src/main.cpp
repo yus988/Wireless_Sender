@@ -16,7 +16,7 @@
   #include <MQTT_manager.h>
 #endif
 
-#include "adjustmentParams.h"
+#include "adjustParams.h"
 #include "config.h"
 #include "pinAssign.h"
 

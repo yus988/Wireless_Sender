@@ -1,6 +1,6 @@
 #ifndef COLOR_SENSOR_H
 #define COLOR_SENSOR_H
-#include "../../include/adjustmentParams.h"
+#include "../../include/adjustParams.h"
 
 namespace ColorSensor {
 void initColorSensor();

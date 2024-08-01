@@ -31,9 +31,9 @@ struct VibrationParams {
   uint8_t vol;  // 振動の強さ 0--255
 };
 // 色別のIDとボリュームのインスタンスを定義
+const VibrationParams RED_PARAMS = {.id = 2, .vol = 50};
 const VibrationParams BLUE_PARAMS = {.id = 0, .vol = 50};
 const VibrationParams YELLOW_PARAMS = {.id = 1, .vol = 50};
-const VibrationParams RED_PARAMS = {.id = 2, .vol = 50};
 
 // RGB値を保持する構造体の定義
 struct RGB {
