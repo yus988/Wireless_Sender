@@ -58,7 +58,7 @@ const RGB COLOR_UNCONNECTED = {255, 0, 0};
     5000  // ミリ秒、同じ色で再度有効にするためのインターバル
 
   #define RETAIN_REFRESH_INTERVAL \
-    10000  // ミリ秒、retatin で空のメッセージを送るインターバル
+    60000  // ミリ秒、retatin で空のメッセージを送るインターバル
 
   // Hapbeat用パラメータの定義（共通）
   #define CATEGORY 99
