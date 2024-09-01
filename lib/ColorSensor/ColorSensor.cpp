@@ -33,8 +33,6 @@ void getColorValues(uint8_t& r, uint8_t& g, uint8_t& b) {
   
 }
 
-
-
 void loopColorSensor() {
   uint16_t r, g, b, c, colorTemp, lux;
   tcs.getRawData(&r, &g, &b, &c);

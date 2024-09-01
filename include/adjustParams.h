@@ -2,6 +2,29 @@
 #ifndef ADJ_PARAMS_H
 #define ADJ_PARAMS_H
 
+// 汎用パラメータ
+
+// RGB値を保持する構造体の定義
+struct RGB {
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+};
+
+// 接続 / 切断時のLEDの色
+const RGB COLOR_CONNECTED = {0, 255, 0};
+const RGB COLOR_UNCONNECTED = {255, 0, 0};
+#define CREATE_CRGB(color) CRGB((color).r, (color).g, (color).b)
+
+// Hapbeat用パラメータの定義（共通）
+#define CATEGORY 99
+#define WEARER_ID 99
+#define DEVICE_POS 99
+#define SUB_ID 0
+#define PLAY_CMD 1  // 0: oneshot, 1: loopStart, 2: loopStop
+
+
+// カラーセンサー利用時
 #ifdef ENABLE_COLOR_SENSOR
 //   #include <FastLED.h>
 // カラーコンフィグ
@@ -35,17 +58,6 @@ const VibrationParams RED_PARAMS = {.id = 2, .vol = 50};
 const VibrationParams BLUE_PARAMS = {.id = 0, .vol = 50};
 const VibrationParams YELLOW_PARAMS = {.id = 1, .vol = 50};
 
-// RGB値を保持する構造体の定義
-struct RGB {
-  uint8_t r;
-  uint8_t g;
-  uint8_t b;
-};
-// 接続 / 切断時のLEDの色
-const RGB COLOR_CONNECTED = {0, 255, 0};
-const RGB COLOR_UNCONNECTED = {255, 0, 0};
-  #define CREATE_CRGB(color) CRGB((color).r, (color).g, (color).b)
-
   // H/W 設定
   #define LED_BRIGHTNESS 5  // 0--255
 
@@ -59,13 +71,6 @@ const RGB COLOR_UNCONNECTED = {255, 0, 0};
 
   #define RETAIN_REFRESH_INTERVAL \
     60000  // ミリ秒、retatin で空のメッセージを送るインターバル
-
-  // Hapbeat用パラメータの定義（共通）
-  #define CATEGORY 99
-  #define WEARER_ID 99
-  #define DEVICE_POS 99
-  #define SUB_ID 0
-  #define PLAY_CMD 1  // 0: oneshot, 1: loopStart, 2: loopStop
 
 #endif
 

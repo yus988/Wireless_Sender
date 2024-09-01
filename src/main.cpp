@@ -1,9 +1,13 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <FastLED.h>
 
 #ifdef ENABLE_COLOR_SENSOR
   #include <ColorSensor.h>
-  #include <FastLED.h>
+#endif
+
+#ifdef ENABLE_MOTION_SENSOR
+
 #endif
 
 #ifndef NO_DISPLAY
@@ -42,7 +46,8 @@ void mqttStatusCallback(const char* status) {
 
 TaskHandle_t thp[2];
 
-// 色の反t寧
+// 色の反映
+#ifdef ENABLE_COLOR_SENSOR
 String determineColor(uint8_t r, uint8_t g, uint8_t b) {
   if (r >= RED_THD.rMin && g <= RED_THD.gMax && b <= RED_THD.bMax) {
     return "Red";
@@ -55,7 +60,6 @@ String determineColor(uint8_t r, uint8_t g, uint8_t b) {
     return "None";
   }
 }
-
 void TaskColorSensor(void* args) {
   static uint8_t r, g, b;
   static int count = 0;                     // 処理のカウント変数
@@ -131,7 +135,6 @@ void TaskColorSensor(void* args) {
                WEARER_ID, DEVICE_POS, id, SUB_ID, lVol, rVol, PLAY_CMD);
       MQTT_manager::sendMessageToHapbeat(message);
     }
-
     count++;
     if (count >= interval) {
       // 任意の変数回ごとに実行する処理
@@ -145,11 +148,14 @@ void TaskColorSensor(void* args) {
 
       count = 0;  // カウントをリセット
     }
-
     lastColor = color;
     delay(COLOR_SENSOR_INTERVAL);
   }
 }
+#endif
+
+
+
 
 void TaskMQTT(void* args) {
   while (1) {
