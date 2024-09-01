@@ -16,14 +16,27 @@ struct ColorThreshold {
 };
 
 // 各色のしきい値のインスタンスを定義
+// スマホアプリ
 const ColorThreshold RED_THD = {
-    .rMin = 160, .rMax = 255, .gMin = 0, .gMax = 50, .bMin = 0, .bMax = 70};
+    .rMin = 140, .rMax = 255, .gMin = 0, .gMax = 60, .bMin = 0, .bMax = 60};
 
 const ColorThreshold BLUE_THD = {
-    .rMin = 0, .rMax = 20, .gMin = 0, .gMax = 80, .bMin = 180, .bMax = 255};
+    .rMin = 0, .rMax = 60, .gMin = 0, .gMax = 100, .bMin = 100, .bMax = 255};
 
 const ColorThreshold YELLOW_THD = {
-    .rMin = 130, .rMax = 159, .gMin = 50, .gMax = 80, .bMin = 0, .bMax = 40};
+    .rMin = 100, .rMax = 130, .gMin = 70, .gMax = 100, .bMin = 0, .bMax = 60};
+
+
+
+// 工科大セッティング
+// const ColorThreshold RED_THD = {
+//     .rMin = 160, .rMax = 255, .gMin = 0, .gMax = 50, .bMin = 0, .bMax = 70};
+
+// const ColorThreshold BLUE_THD = {
+//     .rMin = 0, .rMax = 20, .gMin = 0, .gMax = 80, .bMin = 180, .bMax = 255};
+
+// const ColorThreshold YELLOW_THD = {
+//     .rMin = 130, .rMax = 159, .gMin = 50, .gMax = 80, .bMin = 0, .bMax = 40};
 
 // VibrationParams 構造体の定義
 struct VibrationParams {
