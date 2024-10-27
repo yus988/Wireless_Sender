@@ -3,10 +3,11 @@
 namespace MQTT_manager {
 
 bool mqttConnected = false;
-WiFiClientSecure espClient;
+WiFiClientSecure espClient;  // Secure用のクライアント
+WiFiClient* espClientPtr;    // ポインタとしてのクライアント
 MQTTClient client(256);
 const char* clientIdPrefix = "Sensor_esp32_client-";
-const char* ca_cert = MQTT_CERTIFICATE;
+const char* ca_cert = MQTT_CERTIFICATE;  // CA証明書
 void (*statusCallback)(const char*);
 
 // トピック名の定義は config.h から取得
@@ -54,6 +55,7 @@ void connect() {
         mqttConnected = false;
         Serial.println("Subscription to topicHapbeat failed");
       }
+#if defined(INTERNET)
       if (client.subscribe(topicWebApp, 1)) {
         Serial.print("Subscribed to topic: ");
         Serial.println(topicWebApp);
@@ -61,6 +63,7 @@ void connect() {
         mqttConnected = false;
         Serial.println("Subscription to topicWebApp failed");
       }
+#endif
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.lastError());
@@ -85,26 +88,27 @@ void initMQTTclient(void (*statusCb)(const char*)) {
   }
   Serial.println("Connected to WiFi");
 
-  // 証明書の設定
+  // ビルドフラグに応じてespClientを設定
+#if defined(INTERNET)
   espClient.setCACert(ca_cert);
   espClient.setTimeout(20000);  // タイムアウト設定
+  espClientPtr = &espClient;    // Secureなクライアントを使用
+#else
+  static WiFiClient espClientLocal;  // ローカル用のクライアントを定義
+  espClientPtr = &espClientLocal;  // ローカル用のクライアントを使用
+#endif
 
-  client.begin(MQTT_SERVER, MQTT_PORT, espClient);
-  // client.onMessage(messageReceived);
+  client.begin(MQTT_SERVER, MQTT_PORT, *espClientPtr);
+  client.onMessage(messageReceived);  // メッセージ受信時のコールバックを設定
   connect();
-
-  // 誤って retain 送ってしまった場合にリセット
-    // client.publish(topicHapbeat, "", true,
-    //               QoS_Val);  // 空のペイロードとRetainedフラグをtrueに設定
-    // client.publish(topicWebApp, "", true,
-    //               QoS_Val);  // 空のペイロードとRetainedフラグをtrueに設定
 }
 
 void loopMQTTclient() {
   if (!client.connected()) {
     connect();
+  } else {
+    client.loop();  // 接続中はループ処理を実行
   }
-  client.loop();
 }
 
 // トピックごとのメッセージ送信関数
