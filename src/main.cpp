@@ -42,7 +42,7 @@ void mqttStatusCallback(const char* status) {
 
 TaskHandle_t thp[2];
 
-// 色の反t寧
+// 色の反映
 String determineColor(uint8_t r, uint8_t g, uint8_t b) {
   if (r >= RED_THD.rMin && g <= RED_THD.gMax && b <= RED_THD.bMax) {
     return "Red";
@@ -76,7 +76,8 @@ void TaskColorSensor(void* args) {
   while (1) {
     ColorSensor::getColorValues(r, g, b);
     String color = determineColor(r, g, b);
-    Serial.printf("R: %d G: %d B: %d, color is: %s\n", r, g, b, color.c_str());
+    // Serial.printf("R: %d G: %d B: %d, color is: %s\n", r, g, b,
+    // color.c_str());
 
     unsigned long currentTime = millis();
     bool shouldSendMessage = false;
@@ -132,6 +133,7 @@ void TaskColorSensor(void* args) {
       MQTT_manager::sendMessageToHapbeat(message);
     }
 
+#if defined(INTERNET)
     count++;
     if (count >= interval) {
       // 任意の変数回ごとに実行する処理
@@ -145,6 +147,7 @@ void TaskColorSensor(void* args) {
 
       count = 0;  // カウントをリセット
     }
+#endif
 
     lastColor = color;
     delay(COLOR_SENSOR_INTERVAL);
